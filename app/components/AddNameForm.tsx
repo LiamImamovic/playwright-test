@@ -9,7 +9,7 @@ export const AddNameForm = ({
   onInputChange,
   onAdd,
 }: AddNameFormProps) => (
-  <div className="flex gap-2 w-full max-w-xs">
+  <div className="flex gap-2 w-full justify-center max-w-xs">
     <input
       data-testid="name-input"
       className="border px-2 py-1 rounded flex-1"
