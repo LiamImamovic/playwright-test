@@ -51,13 +51,30 @@ jobs:
         run: npm install
 
       - name: Build application
-        run: npm run build
+        run: |
+          echo "🔨 Building application..."
+          npm run build
+          echo "✅ Build completed successfully"
+
+      - name: Check build output
+        run: |
+          if [ ! -d ".next" ]; then
+            echo "❌ .next directory not found!"
+            echo "📁 Current directory contents:"
+            ls -la
+            exit 1
+          else
+            echo "✅ .next directory found"
+            echo "📁 .next directory contents:"
+            ls -la .next/
+          fi
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
           name: build-files
           path: .next/
+          retention-days: 1
 
   # Job 3: Tests Playwright
   test:
@@ -86,6 +103,17 @@ jobs:
         with:
           name: build-files
           path: .next/
+
+      - name: Verify build artifacts
+        run: |
+          if [ ! -d ".next" ]; then
+            echo "❌ Build artifacts not found!"
+            exit 1
+          else
+            echo "✅ Build artifacts downloaded successfully"
+            echo "📁 .next directory contents:"
+            ls -la .next/
+          fi
 
       - name: Start application
         run: npm start &
