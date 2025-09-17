@@ -1,7 +1,7 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 export type Name = {
   id: string;
@@ -16,7 +16,7 @@ export const useNames = () => {
   const [error, setError] = useState<string | null>(null);
   const { data: session } = useSession();
 
-  const fetchNames = async () => {
+  const fetchNames = useCallback(async () => {
     if (!session) {
       setNames([]);
       setLoading(false);
@@ -39,7 +39,7 @@ export const useNames = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [session]);
 
   const addName = async (value: string) => {
     if (!session) {
@@ -70,7 +70,7 @@ export const useNames = () => {
 
   useEffect(() => {
     fetchNames();
-  }, [session]);
+  }, [fetchNames]);
 
   return {
     names,
