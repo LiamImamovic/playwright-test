@@ -7,7 +7,7 @@ export const AuthButton = () => {
 
   if (status === "loading")
     return (
-      <div className="flex items-center gap-2">
+      <div data-testid="auth-loading" className="flex items-center gap-2">
         <div className="w-8 h-8 bg-gray-200 rounded-full animate-pulse" />
         <span className="text-gray-500">Chargement...</span>
       </div>
@@ -15,11 +15,13 @@ export const AuthButton = () => {
 
   if (session)
     return (
-      <div className="flex items-center gap-4">
+      <div data-testid="authenticated-user" className="flex items-center gap-4">
         <div className="flex items-center gap-2">
           {session.user?.image && (
             // Use native img to avoid next/image domain config issues
+            // eslint-disable-next-line @next/next/no-img-element
             <img
+              data-testid="user-avatar"
               src={session.user.image}
               alt={session.user.name || "User"}
               width={32}
@@ -29,11 +31,12 @@ export const AuthButton = () => {
               style={{ width: 32, height: 32 }}
             />
           )}
-          <span className="text-sm text-gray-700">
+          <span data-testid="user-greeting" className="text-sm text-gray-700">
             Bonjour, {session.user?.name || session.user?.email}
           </span>
         </div>
         <button
+          data-testid="sign-out-button"
           onClick={() => signOut()}
           className="bg-red-500 text-white px-3 py-1 rounded text-sm hover:bg-red-600 cursor-pointer"
         >
@@ -44,6 +47,7 @@ export const AuthButton = () => {
 
   return (
     <button
+      data-testid="sign-in-button"
       onClick={() => signIn("google")}
       className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 flex items-center gap-2 cursor-pointer"
     >

@@ -30,7 +30,9 @@ export default function Home() {
     <main className="flex min-h-screen flex-col items-center justify-center gap-6 p-4">
       {session && <AuthButton />}
       <div className="w-full max-w-md flex flex-col items-center">
-        <h1 className="text-2xl font-bold text-center">Liste de noms</h1>
+        <h1 data-testid="page-title" className="text-2xl font-bold text-center">
+          Liste de noms
+        </h1>
 
         {session ? (
           <>
@@ -43,13 +45,19 @@ export default function Home() {
             </div>
 
             {loading && (
-              <div className="text-center text-gray-500">
+              <div
+                data-testid="loading-message"
+                className="text-center text-gray-500"
+              >
                 Chargement des noms...
               </div>
             )}
 
             {error && (
-              <div className="text-center text-red-500 bg-red-50 p-3 rounded">
+              <div
+                data-testid="error-message"
+                className="text-center text-red-500 bg-red-50 p-3 rounded"
+              >
                 {error}
               </div>
             )}
@@ -57,18 +65,25 @@ export default function Home() {
             {!loading && !error && (
               <div className="">
                 {names.length === 0 ? (
-                  <p className="text-gray-500 text-center">
+                  <p
+                    data-testid="empty-names-message"
+                    className="text-gray-500 text-center"
+                  >
                     Aucun nom ajouté pour le moment
                   </p>
                 ) : (
-                  <ul className="flex flex-col gap-4">
+                  <ul data-testid="names-list" className="flex flex-col gap-4">
                     {names.map((name: Name) => (
                       <li
                         key={name.id}
+                        data-testid={`name-item-${name.id}`}
                         className="border-b py-2 px-4 rounded-lg max-h-96 overflow-y-auto bg-white text-center"
                       >
                         <div className="items-center">
-                          <span className="text-lg font-bold text-gray-800">
+                          <span
+                            data-testid={`name-value-${name.id}`}
+                            className="text-lg font-bold text-gray-800"
+                          >
                             {name.value}
                           </span>
                         </div>
@@ -80,8 +95,11 @@ export default function Home() {
             )}
           </>
         ) : (
-          <div className="flex flex-col items-center">
-            <p className="text-gray-600 mb-4">
+          <div
+            data-testid="unauthenticated-section"
+            className="flex flex-col items-center"
+          >
+            <p data-testid="login-message" className="text-gray-600 mb-4">
               Connectez-vous pour gérer votre liste de noms
             </p>
             <AuthButton />
