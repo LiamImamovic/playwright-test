@@ -31,56 +31,11 @@ jobs:
       - name: Run TypeScript check
         run: npm run type-check
 
-  # Job 2: Build de l'application
-  build:
-    name: Build Application
-    runs-on: ubuntu-latest
-    needs: lint-and-typecheck
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-          cache: "npm"
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Build application
-        run: |
-          echo "🔨 Building application..."
-          npm run build
-          echo "✅ Build completed successfully"
-
-      - name: Check build output
-        run: |
-          if [ ! -d ".next" ]; then
-            echo "❌ .next directory not found!"
-            echo "📁 Current directory contents:"
-            ls -la
-            exit 1
-          else
-            echo "✅ .next directory found"
-            echo "📁 .next directory contents:"
-            ls -la .next/
-          fi
-
-      - name: Upload build artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: build-files
-          path: .next/
-          retention-days: 1
-
-  # Job 3: Tests Playwright
+  # Job 2: Tests Playwright (avec build intégré)
   test:
     name: Playwright Tests
     runs-on: ubuntu-latest
-    needs: build
+    needs: lint-and-typecheck
 
     steps:
       - name: Checkout code
@@ -98,19 +53,21 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
 
-      - name: Download build artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: build-files
-          path: .next/
+      - name: Build application
+        run: |
+          echo "🔨 Building application..."
+          npm run build
+          echo "✅ Build completed successfully"
 
-      - name: Verify build artifacts
+      - name: Check build output
         run: |
           if [ ! -d ".next" ]; then
-            echo "❌ Build artifacts not found!"
+            echo "❌ .next directory not found!"
+            echo "📁 Current directory contents:"
+            ls -la
             exit 1
           else
-            echo "✅ Build artifacts downloaded successfully"
+            echo "✅ .next directory found"
             echo "📁 .next directory contents:"
             ls -la .next/
           fi
@@ -132,11 +89,11 @@ jobs:
           path: playwright-report/
           retention-days: 30
 
-  # Job 4: Notification de succès
+  # Job 3: Notification de succès
   success:
     name: ✅ All Tests Passed
     runs-on: ubuntu-latest
-    needs: [lint-and-typecheck, build, test]
+    needs: [lint-and-typecheck, test]
     if: success()
 
     steps:
